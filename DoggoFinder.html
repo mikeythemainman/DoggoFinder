@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PawfectMatch</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🐶 PawfectMatch</h1>
+  <p id="question">How active are you?</p>
+
+  <div id="answers"></div>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  const questions = [
+    {
+      text: "How active are you?",
+      key: "activity",
+      options: ["low", "medium", "high"]
+    },
+    {
+      text: "What is your living space?",
+      key: "space",
+      options: ["apartment", "house"]
+    },
+    {
+      text: "How much grooming can you handle?",
+      key: "grooming",
+      options: ["low", "medium", "high"]
+    }
+  ];
+
+  const breeds = [
+    { name: "Labrador Retriever", activity: "high", space: "house", grooming: "low", desc: "Friendly and great for families." },
+    { name: "Golden Retriever", activity: "high", space: "house", grooming: "high", desc: "Loyal and gentle." },
+    { name: "French Bulldog", activity: "low", space: "apartment", grooming: "low", desc: "Great for small spaces." },
+    { name: "Poodle", activity: "medium", space: "apartment", grooming: "high", desc: "Smart but needs grooming." },
+    { name: "Border Collie", activity: "high", space: "house", grooming: "medium", desc: "Very energetic." },
+    { name: "Bulldog", activity: "low", space: "apartment", grooming: "low", desc: "Calm and relaxed." },
+    { name: "German Shepherd", activity: "high", space: "house", grooming: "medium", desc: "Protective and loyal." },
+    { name: "Beagle", activity: "medium", space: "house", grooming: "low", desc: "Friendly and curious." },
+    { name: "Chihuahua", activity: "low", space: "apartment", grooming: "low", desc: "Small and lively." },
+    { name: "Dachshund", activity: "low", space: "apartment", grooming: "low", desc: "Playful and stubborn." },
+    { name: "Boxer", activity: "high", space: "house", grooming: "low", desc: "Energetic and fun." },
+    { name: "Shih Tzu", activity: "low", space: "apartment", grooming: "high", desc: "Affectionate lap dog." },
+    { name: "Rottweiler", activity: "medium", space: "house", grooming: "low", desc: "Strong and confident." },
+    { name: "Siberian Husky", activity: "high", space: "house", grooming: "high", desc: "Very active." },
+    { name: "Cavalier King Charles Spaniel", activity: "low", space: "apartment", grooming: "medium", desc: "Gentle and loving." }
+  ];
+
+   let currentQuestion = 0;
+  let answers = {};
+
+  function showQuestion() {
+    const q = questions[currentQuestion];
+    document.getElementById("question").innerText = q.text;
+
+    const answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+
+    q.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.innerText = option;
+      btn.onclick = () => selectAnswer(option);
+      answersDiv.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(option) {
+    const key = questions[currentQuestion].key;
+    answers[key] = option;
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    let bestMatch = null;
+    let bestScore = -1;
+
+    breeds.forEach(breed => {
+      let score = 0;
+      if (breed.activity === answers.activity) score++;
+      if (breed.space === answers.space) score++;
+      if (breed.grooming === answers.grooming) score++;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = breed;
+      }
+    });
+
+    document.getElementById("question").innerText = "Your Match:";
+    document.getElementById("answers").innerHTML = "";
+
+    document.getElementById("result").innerHTML = `
+      <strong>${bestMatch.name}</strong><br>
+      <em>${bestMatch.desc}</em><br>
+      <small>Match score: ${bestScore}/3</small><br><br>
+      <button onclick="restartQuiz()">Restart Quiz</button>
+    `;
+  }
+
+  function restartQuiz() {
+    currentQuestion = 0;
+    answers = {};
+    document.getElementById("result").innerHTML = "";
+    showQuestion();
+  }
+
+  showQuestion();
+</script>
+
+</body>
+</html>
